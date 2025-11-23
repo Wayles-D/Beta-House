@@ -1,3 +1,3 @@
-const API_URL = 'http://localhost:3000/api'; // Default to localhost, update when Render link is provided
+const API_URL = 'https://beta-house-backend-ue7a.onrender.com/api';
 
 export default API_URL;
