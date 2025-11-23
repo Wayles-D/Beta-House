@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
 
-const Hero = () => {
+const Hero = ({ onSearch }) => {
   const [location, setLocation] = useState('Gbagada')
   const [propertyType, setPropertyType] = useState('Apartment')
   const [bedrooms, setBedrooms] = useState(0)
 
   const handleFind = () => {
-    // replace with actual search/navigation logic
-    console.log({ location, propertyType, bedrooms })
+    onSearch({ location, propertyType, bedrooms })
   }
 
   return (

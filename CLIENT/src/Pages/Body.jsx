@@ -49,7 +49,7 @@ const Card = ({ p }) => (
   </div>
 )
 
-const Body = () => {
+const Body = ({ filters }) => {
   const { properties: fetchedProperties, isLoading, error } = useProperties()
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState('default')
@@ -67,7 +67,17 @@ const Body = () => {
 
   // simple filtering + sorting demo
   const filtered = properties
-    .filter(p => p.title.toLowerCase().includes(query.toLowerCase()) || p.location.toLowerCase().includes(query.toLowerCase()))
+    .filter(p => {
+      // Text search filter
+      const matchesQuery = p.title.toLowerCase().includes(query.toLowerCase()) || p.location.toLowerCase().includes(query.toLowerCase())
+
+      // Hero filters
+      const matchesLocation = !filters?.location || p.location.toLowerCase().includes(filters.location.toLowerCase())
+      const matchesType = !filters?.propertyType || p.title.toLowerCase().includes(filters.propertyType.toLowerCase()) || p.tag.toLowerCase().includes(filters.propertyType.toLowerCase())
+      const matchesBedrooms = !filters?.bedrooms || p.bedrooms >= filters.bedrooms
+
+      return matchesQuery && matchesLocation && matchesType && matchesBedrooms
+    })
     .sort((a, b) => {
       if (sort === 'price-asc') return Number(a.price.replace(/\D/g, '')) - Number(b.price.replace(/\D/g, ''))
       if (sort === 'price-desc') return Number(b.price.replace(/\D/g, '')) - Number(a.price.replace(/\D/g, ''))

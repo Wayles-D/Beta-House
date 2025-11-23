@@ -71,7 +71,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-          <p>Copyright 2023 BetaHouse | Designed by Michael.fig</p>
+          <p>Copyright 2023 BetaHouse | Designed by <Link to="https://wayles-portfolio.vercel.app" className="hover:text-white transition-colors mt-4 md:mt-0"><span>Wayles</span></Link></p>
           <Link to="/privacy" className="hover:text-white transition-colors mt-4 md:mt-0">Privacy Policy</Link>
         </div>
       </div>
@@ -80,3 +80,4 @@ const Footer = () => {
 }
 
 export default Footer
+
