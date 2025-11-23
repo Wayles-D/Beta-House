@@ -21,6 +21,7 @@ export const useLogin = () => {
         if (!response.ok) {
             setIsLoading(false)
             setError(json.error)
+            return false
         }
         if (response.ok) {
             // save the user to local storage
@@ -31,6 +32,7 @@ export const useLogin = () => {
 
             // update loading state
             setIsLoading(false)
+            return true
         }
     }
 
