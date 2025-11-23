@@ -74,7 +74,7 @@ const Login = ({ onLogin }) => {
             </button>
 
             <p className='text-sm text-center text-gray-500 mt-3'>
-              New User? <a href='/signup' className='text-green-600'>Sign Up</a>
+              New User? <a href='/SignIn' className='text-green-600'>Sign Up</a>
             </p>
           </form>
         </div>

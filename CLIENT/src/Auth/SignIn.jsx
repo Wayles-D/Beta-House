@@ -152,7 +152,7 @@ const SignIn = () => {
               </button>
 
               <p className='text-sm text-gray-500 text-center'>
-                Already have an account? <a href='/signin' className='text-green-600'>Sign in</a>
+                Already have an account? <a href='/Login' className='text-green-600'>Sign in</a>
               </p>
             </form>
           </div>
