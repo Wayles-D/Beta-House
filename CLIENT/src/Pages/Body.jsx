@@ -1,23 +1,5 @@
 import React, { useState } from 'react'
-
-const mockProperties = [
-  { id: 1, title: 'Real House Luxury Villa', location: 'Victoria Island, Lagos', price: '₦3,340,000,000', bedrooms: 6, bathrooms: 3, featured: true, tag: 'For Sale', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763672564/b-11.jpg_3_tumagb.png' },
-  { id: 2, title: 'Exquisite Haven Villa', location: 'Festac, Lagos', price: '₦4,000,000/Year', bedrooms: 5, bathrooms: 3, featured: true, tag: 'For Rent', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763672524/b-11.jpg_2_dpeclb.png' },
-  { id: 3, title: 'Luxe Palatial Villa', location: 'Gbagada, Lagos', price: '₦5,350,000,000', bedrooms: 7, bathrooms: 5, featured: true, tag: 'For Sale', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763672384/b-11.jpg_iplcex.png' },
-  { id: 4, title: 'Harmony Luxury Villa', location: 'Ikoyi, Lagos', price: '₦4,000,000/Year', bedrooms: 4, bathrooms: 3, featured: true, tag: 'For Rent', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763671693/b-11.jpg_4_rqj29n.svg' },
-  { id: 5, title: 'Real House Luxury Villa', location: 'Lekki-Ajah, Lagos', price: '₦350,000,000', bedrooms: 6, bathrooms: 4, featured: true, tag: 'For rent', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763671607/b-11.jpg_3_npo5mg.svg' },
-  { id: 6, title: 'Real House Luxury Villa', location: 'Lekki-Ajah, Lagos', price: '₦4,200,000/Year', bedrooms: 5, bathrooms: 3, featured: true, tag: 'For Sale', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763671583/b-11.jpg_2_wpqmod.svg' },
-  { id: 7, title: 'Infinite Bliss Villa', location: 'Ajah, Lagos', price: '₦2,350,000,000', bedrooms: 5, bathrooms: 3, featured: true, tag: 'For Sale', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763671538/b-11.jpg_1_hgasq0.svg' },
-  { id: 8, title: 'Real House Luxury Villa', location: 'Ikeja GRA, Lagos', price: '₦3,350,000/Year', bedrooms: 4, bathrooms: 3, featured: true, tag: 'For Rent', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763671499/b-11.jpg_uy0w82.svg' },
-  { id: 9, title: 'Real House Luxury Villa', location: 'Ikeja, Lagos', price: '₦600,000,000', bedrooms: 6, bathrooms: 4, featured: true, tag: 'For Sale', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763671425/b-11.jpg_1_e6mkov.png' },
-  { id: 10, title: 'Real House Luxury Villa', location: 'Ikeja, Lagos', price: '₦600,000,000', bedrooms: 6, bathrooms: 4, featured: true, tag: 'For Sale', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763671425/b-11.jpg_1_e6mkov.png' },
-  { id: 11, title: 'Real House Luxury Villa', location: 'Ikeja, Lagos', price: '₦600,000,000', bedrooms: 6, bathrooms: 4, featured: true, tag: 'For Sale', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763671425/b-11.jpg_1_e6mkov.png' },
-  { id: 12, title: 'Harmony Luxury Villa', location: 'Ikoyi, Lagos', price: '₦4,000,000/Year', bedrooms: 4, bathrooms: 3, featured: true, tag: 'For Rent', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763671693/b-11.jpg_4_rqj29n.svg' },
-  { id: 13, title: 'Exquisite Haven Villa', location: 'Festac, Lagos', price: '₦4,000,000/Year', bedrooms: 5, bathrooms: 3, featured: true, tag: 'For Rent', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763672524/b-11.jpg_2_dpeclb.png' },
-  { id: 14, title: 'Infinite Bliss Villa', location: 'Ajah, Lagos', price: '₦2,350,000,000', bedrooms: 5, bathrooms: 3, featured: true, tag: 'For Sale', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763671538/b-11.jpg_1_hgasq0.svg' },
-  { id: 15, title: 'Real House Luxury Villa', location: 'Ikeja GRA, Lagos', price: '₦3,350,000/Year', bedrooms: 4, bathrooms: 3, featured: true, tag: 'For Rent', img: 'https://res.cloudinary.com/dmb5ggmvg/image/upload/v1763671499/b-11.jpg_uy0w82.svg' },
-  // add more mock items as needed
-]
+import { useProperties } from '../hooks/useProperties'
 
 const Card = ({ p }) => (
   <div className="bg-white rounded-lg shadow-sm overflow-hidden">
@@ -68,18 +50,28 @@ const Card = ({ p }) => (
 )
 
 const Body = () => {
+  const { properties: fetchedProperties, isLoading, error } = useProperties()
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState('default')
   const [page, setPage] = useState(1)
   const perPage = 9
 
+  if (isLoading) return <div className="text-center mt-10">Loading properties...</div>
+  if (error) return <div className="text-center mt-10 text-red-600">{error}</div>
+
+  const properties = fetchedProperties.map(p => ({
+    ...p,
+    id: p._id, // map _id to id
+    img: p.image // map image to img
+  }))
+
   // simple filtering + sorting demo
-  const filtered = mockProperties
+  const filtered = properties
     .filter(p => p.title.toLowerCase().includes(query.toLowerCase()) || p.location.toLowerCase().includes(query.toLowerCase()))
     .sort((a, b) => {
       if (sort === 'price-asc') return Number(a.price.replace(/\D/g, '')) - Number(b.price.replace(/\D/g, ''))
       if (sort === 'price-desc') return Number(b.price.replace(/\D/g, '')) - Number(a.price.replace(/\D/g, ''))
-      return a.id - b.id
+      return 0
     })
 
   const total = filtered.length

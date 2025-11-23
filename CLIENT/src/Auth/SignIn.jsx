@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useSignup } from '../hooks/useSignup'
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -10,6 +11,7 @@ const SignIn = () => {
     agree: false,
   })
   const [error, setError] = useState('')
+  const { signup, error: signupError, isLoading } = useSignup()
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -17,7 +19,7 @@ const SignIn = () => {
     setError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.firstName || !form.lastName || !form.email || !form.password || !form.confirm) {
       setError('Please fill out all fields.')
@@ -32,8 +34,7 @@ const SignIn = () => {
       return
     }
 
-    // TODO: replace with real submit (API call)
-    console.log('register', form)
+    await signup(form.firstName, form.lastName, form.email, form.password)
   }
 
   return (
@@ -128,8 +129,9 @@ const SignIn = () => {
               </div>
 
               {error && <p className='text-xs text-red-600'>{error}</p>}
+              {signupError && <p className='text-xs text-red-600'>{signupError}</p>}
 
-              <button type='submit' className='w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-md font-medium'>
+              <button disabled={isLoading} type='submit' className='w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-md font-medium disabled:opacity-50'>
                 Sign up
               </button>
 

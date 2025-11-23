@@ -1,21 +1,22 @@
 import React, { useState } from 'react'
+import { useLogin } from '../hooks/useLogin'
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [remember, setRemember] = useState(false)
   const [error, setError] = useState('')
+  const { login, error: loginError, isLoading } = useLogin()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!email || !password) {
       setError('Please enter email and password.')
       return
     }
     setError('')
-    // TODO: call API / auth
-    console.log('login', { email, password, remember })
-    if (onLogin) onLogin({ email })
+
+    await login(email, password)
   }
 
   return (
@@ -57,8 +58,9 @@ const Login = ({ onLogin }) => {
             </div>
 
             {error && <p className='text-xs text-red-600'>{error}</p>}
+            {loginError && <p className='text-xs text-red-600'>{loginError}</p>}
 
-            <button className='w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-md'>Sign in</button>
+            <button disabled={isLoading} className='w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-md disabled:opacity-50'>Sign in</button>
 
             <div className='flex items-center gap-3'>
               <div className='flex-1 h-px bg-gray-200' />
