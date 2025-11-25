@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { CgMenuRight } from 'react-icons/cg';
 import { GrClose } from 'react-icons/gr';
 import { useAuthContext } from '../hooks/useAuthContext';
@@ -8,25 +8,52 @@ import { useLogout } from '../hooks/useLogout';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { user } = useAuthContext();
   const { logout } = useLogout();
+  const location = useLocation();
 
   const navigationItems = [
-    { name: "Home", path: "/" },
-    { name: "Properties", path: "/Properties" },
-    { name: "About Us", path: "/About Us" },
-    { name: "Blog", path: "/Blog" },
-    { name: "Contact Us", path: "/Contact Us" },
+    { name: "Home", path: "/", active: true },
+    { name: "Properties", path: "/Properties", active: false },
+    { name: "About Us", path: "/About Us", active: false },
+    { name: "Blog", path: "/Blog", active: false },
+    { name: "Contact Us", path: "/Contact Us", active: false },
   ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 20;
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrolled]);
 
   const handleLogout = () => {
     logout();
     setIsProfileOpen(false);
   };
 
+  // Determine if we should show the transparent navbar
+  // Only on homepage and when not scrolled
+  const isTransparent = location.pathname === '/' && !scrolled;
+
   return (
     <>
-      <header className="backdrop-blur-sm md:shadow-md md:border-b md:border-[#34170D] fixed top-0 left-0 w-full pt-2 z-50">
+      <header 
+        className={`fixed top-0 left-0 w-full pt-2 z-50 transition-all duration-300 ${
+          isTransparent 
+            ? 'backdrop-blur-sm bg-transparent md:border-b md:border-[#34170D]' 
+            : 'bg-[#34170D] shadow-md'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 lg:py-2">
           <div className="flex items-center justify-between">
             {/* Logo */}
@@ -44,13 +71,23 @@ const Navbar = () => {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-4">
               {navigationItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className="relative text-white font-bold text-center after:content-[''] after:block after:h-0.5 after:bg-white after:scale-x-0 after:origin-center after:transition-transform after:duration-700 hover:after:scale-x-100 exo-2-medium "
-                >
-                  {item.name}
-                </Link>
+                item.active ? (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className="relative text-white font-bold text-center after:content-[''] after:block after:h-0.5 after:bg-white after:scale-x-0 after:origin-center after:transition-transform after:duration-700 hover:after:scale-x-100 exo-2-medium"
+                  >
+                    {item.name}
+                  </Link>
+                ) : (
+                  <span
+                    key={item.name}
+                    className="relative text-white/40 font-bold text-center cursor-not-allowed exo-2-medium"
+                    title="Coming soon"
+                  >
+                    {item.name}
+                  </span>
+                )
               ))}
             </nav>
 
@@ -58,7 +95,7 @@ const Navbar = () => {
               {!user ? (
                 <>
                   <Link to={'/Signin'}>
-                    <button className='border-2 border-accent rounded-xl p-2 lg:w-[120px] lg:h-12 text-white hover:bg-white/30 hover:font-semibold'>Sign In</button>
+                    <button className='border-2 border-accent rounded-xl p-2 lg:w-[120px] lg:h-12 text-white hover:bg-white/30 hover:font-semibold'>Sign Up</button>
                   </Link>
                   <Link to={'/Login'}>
                     <button className='bg-green-500 p-2 rounded-xl lg:w-[120px] lg:h-12 hover:bg-green-700 text-white hover:font-semibold'>Login</button>
@@ -132,14 +169,23 @@ const Navbar = () => {
             <div className="md:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1">
                 {navigationItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.path}
-                    className="block px-3 py-2 text-white hover:text-white/60 font-medium hover:bg-green-500 hover:rounded-xl"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
+                  item.active ? (
+                    <Link
+                      key={item.name}
+                      to={item.path}
+                      className="block px-3 py-2 text-white hover:text-white/60 font-medium hover:bg-green-500 hover:rounded-xl"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  ) : (
+                    <span
+                      key={item.name}
+                      className="block px-3 py-2 text-white/40 font-medium cursor-not-allowed"
+                    >
+                      {item.name} (Coming soon)
+                    </span>
+                  )
                 ))}
                 {user ? (
                   <button
@@ -154,7 +200,7 @@ const Navbar = () => {
                 ) : (
                   <div className="flex flex-col gap-2 mt-4">
                     <Link to={'/Signin'} onClick={() => setIsMenuOpen(false)}>
-                      <button className='w-full border-2 border-accent rounded-xl p-2 text-white'>Sign In</button>
+                      <button className='w-full border-2 border-accent rounded-xl p-2 text-white'>Sign Up</button>
                     </Link>
                     <Link to={'/Login'} onClick={() => setIsMenuOpen(false)}>
                       <button className='w-full bg-green-500 p-2 rounded-xl text-white'>Login</button>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSignup } from '../hooks/useSignup'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -13,6 +13,7 @@ const SignIn = () => {
   })
   const [error, setError] = useState('')
   const { signup, error: signupError, isLoading } = useSignup()
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -35,7 +36,21 @@ const SignIn = () => {
       return
     }
 
-    await signup(form.firstName, form.lastName, form.email, form.password)
+    const success = await signup(form.firstName, form.lastName, form.email, form.password)
+    
+    if (success) {
+      // Clear the form
+      setForm({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirm: '',
+        agree: false,
+      })
+      // Redirect to login page
+      navigate('/Login')
+    }
   }
 
   return (
@@ -153,7 +168,7 @@ const SignIn = () => {
               </button>
 
               <p className='text-sm text-gray-500 text-center'>
-                Already have an account? <Link to={'/Login'} className='text-green-600'>Sign in</Link>
+                Already have an account? <Link to={'/Login'} className='text-green-600'>Sign In</Link>
               </p>
             </form>
           </div>

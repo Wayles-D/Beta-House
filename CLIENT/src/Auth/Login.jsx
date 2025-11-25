@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useLogin } from '../hooks/useLogin'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('')
@@ -8,6 +8,7 @@ const Login = ({ onLogin }) => {
   const [remember, setRemember] = useState(false)
   const [error, setError] = useState('')
   const { login, error: loginError, isLoading } = useLogin()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -17,7 +18,12 @@ const Login = ({ onLogin }) => {
     }
     setError('')
 
-    await login(email, password)
+    const success = await login(email, password)
+    
+    if (success) {
+      // Redirect to homepage after successful login
+      navigate('/')
+    }
   }
 
   return (
@@ -86,8 +92,7 @@ const Login = ({ onLogin }) => {
             alt='Login image'
             className='w-full h-full object-cover'
           />
-          <div className='absolute inset-0 bg-black/30' />
-        </div>
+          <div className='absolute inset-0 bg-black/30' /></div>
       </div>
     </section>
   )
