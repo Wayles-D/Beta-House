@@ -50,8 +50,8 @@ const Navbar = () => {
       <header 
         className={`fixed top-0 left-0 w-full pt-2 z-50 transition-all duration-300 ${
           isTransparent 
-            ? 'backdrop-blur-sm bg-transparent md:border-b md:border-[#34170D]' 
-            : 'bg-[#34170D] shadow-md'
+            ? 'backdrop-blur-sm bg-transparent md:border-b md:border-[#03341d]' 
+            : 'bg-[#03341d] shadow-md'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 lg:py-2">
